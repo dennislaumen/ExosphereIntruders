@@ -51,6 +51,7 @@ var ExosphereIntruders = function (c) {
 	    context.lineTo(x, y - 3);
 	    context.lineTo(x, y);
 
+        context.fillStyle = "rgb(124, 252, 0)";
 	    context.fill();
 	};
 
@@ -71,6 +72,8 @@ var ExosphereIntruders = function (c) {
 
 	var clearCanvas = function () {
 	    context.clearRect(0, 0, canvas.width, canvas.height);
+        context.fillStyle = "rgb(0, 0, 0)";
+        context.fillRect(0, 0, canvas.width, canvas.height);
 	};
 
 	var run = function () {
