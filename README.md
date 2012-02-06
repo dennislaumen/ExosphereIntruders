@@ -2,6 +2,8 @@
 
 A pure (i.e. no JQuery or other funky JavaScript frameworks) Javascript and Canvas implementation of the classic video game Space Invaders.
 
+Progress can be tracked on the project's [Trello board](https://trello.com/b/gpKdJ4QU).
+
 # License
 
 (The MIT License)
