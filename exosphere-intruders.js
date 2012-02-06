@@ -16,6 +16,10 @@ var ExosphereIntruders = function (c) {
         this.x = 105 * scale;
 	    this.y = 250 * scale;
 
+        LaserTurret.prototype.fire = function () {
+            // TODO add firing capabilities.
+        };
+
 		LaserTurret.prototype.moveLeft = function () {
 			if ((this.x - this.speed) > 0) {
                 this.x -= this.speed;
@@ -62,6 +66,10 @@ var ExosphereIntruders = function (c) {
 	var initControls = function () {
 	    window.addEventListener("keydown", function (event) {
 	        switch (event.keyCode) {
+            case 32:
+                laserTurret.fire();
+                break;
+
 	        case 37:
 	            laserTurret.moveLeft();
 	            break;
