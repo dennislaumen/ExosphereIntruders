@@ -4,13 +4,17 @@ var ExosphereIntruders = function (c) {
     var canvas = c;
 	var context = canvas.getContext("2d");
     var fps = 30;
+    /* Scale assumes the height and width of the canvas are a multiple of 224 by
+       260. */
+    var scale = canvas.width / 224;
     var intervalId;
 
 	var LaserTurret = function () {
-	    this.x = 105;
-	    this.y = 250;
-		this.width = 14;
-		this.speed = 8;
+		this.width = 14 * scale;
+		this.speed = 8 * scale;
+
+        this.x = 105 * scale;
+	    this.y = 250 * scale;
 
 		LaserTurret.prototype.moveLeft = function () {
 			if ((this.x - this.speed) > 0) {
@@ -35,20 +39,20 @@ var ExosphereIntruders = function (c) {
 
 	    context.moveTo(x, y);
 
-	    context.lineTo(x + 14, y);
-	    context.lineTo(x + 14, y - 3);
-	    context.lineTo(x + 13, y - 3);
-	    context.lineTo(x + 13, y - 4);
-	    context.lineTo(x + 8, y - 4);
-	    context.lineTo(x + 8, y - 6);
-	    context.lineTo(x + 7, y - 6);
-	    context.lineTo(x + 7, y - 7);
-	    context.lineTo(x + 7, y - 6);
-	    context.lineTo(x + 6, y - 6);
-	    context.lineTo(x + 6, y - 4);
-	    context.lineTo(x + 1, y - 4);
-	    context.lineTo(x + 1, y - 3);
-	    context.lineTo(x, y - 3);
+	    context.lineTo(x + (14 * scale), y);
+	    context.lineTo(x + (14 * scale), y - (3 * scale));
+	    context.lineTo(x + (13 * scale), y - (3 * scale));
+	    context.lineTo(x + (13 * scale), y - (4 * scale));
+	    context.lineTo(x + (8 * scale), y - (4 * scale));
+	    context.lineTo(x + (8 * scale), y - (6 * scale));
+	    context.lineTo(x + (7 * scale), y - (6 * scale));
+	    context.lineTo(x + (7 * scale), y - (7 * scale));
+	    context.lineTo(x + (7 * scale), y - (6 * scale));
+	    context.lineTo(x + (6 * scale), y - (6 * scale));
+	    context.lineTo(x + (6 * scale), y - (4 * scale));
+	    context.lineTo(x + (1 * scale), y - (4 * scale));
+	    context.lineTo(x + (1 * scale), y - (3 * scale));
+	    context.lineTo(x, y - (3 * scale));
 	    context.lineTo(x, y);
 
         context.fillStyle = "rgb(124, 252, 0)";
