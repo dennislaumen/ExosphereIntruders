@@ -1,31 +1,32 @@
-var ExosphereIntruders = function (canvas) {
+var ExosphereIntruders = function (c) {
 	"use strict";
-	
+
+    var canvas = c;
+	var context = canvas.getContext("2d");
+    var fps = 30;
+    var intervalId;
+
 	var LaserTurret = function () {
 	    this.x = 105;
 	    this.y = 250;
 		this.width = 14;
 		this.speed = 8;
-		
+
 		LaserTurret.prototype.moveLeft = function () {
 			if ((this.x - this.speed) > 0) {
-		    	this.x -= this.speed;
+                this.x -= this.speed;
 			}
 		};
 
 		LaserTurret.prototype.moveRight = function () {
 			if ((this.x + this.width + this.speed) < canvas.width) {
-		    	this.x += this.speed;
+                this.x += this.speed;
 			}
 		};
 	};
-	
-	var canvas = canvas;
-	var context = canvas.getContext("2d");
-    var fps = 30;
-	
+
 	var laserTurret = new LaserTurret();
-	
+
 	var drawLaserTurret = function () {
 	    var x = laserTurret.x;
 	    var y = laserTurret.y;
@@ -50,9 +51,9 @@ var ExosphereIntruders = function (canvas) {
 	    context.lineTo(x, y - 3);
 	    context.lineTo(x, y);
 
-	    context.fill();	
-	}
-	
+	    context.fill();
+	};
+
 	var initControls = function () {
 	    window.addEventListener("keydown", function (event) {
 	        switch (event.keyCode) {
@@ -65,8 +66,8 @@ var ExosphereIntruders = function (canvas) {
 	            break;
 	        }
 	    }, false);
-		
-	}
+
+	};
 
 	var clearCanvas = function () {
 	    context.clearRect(0, 0, canvas.width, canvas.height);
@@ -79,18 +80,18 @@ var ExosphereIntruders = function (canvas) {
 
 	var start = function () {
 		initControls();
-		
-	    this.intervalId = setInterval(run, 1000 / this.fps);
+
+	    intervalId = setInterval(run, 1000 / fps);
 	};
 
 	var stop = function () {
-	    clearInterval(this.intervalId);
+	    clearInterval(intervalId);
 	};
-	
+
 	return {
 		start: start,
 		stop: stop
-	}	
+	};
 };
 
 
