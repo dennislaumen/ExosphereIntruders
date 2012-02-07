@@ -57,7 +57,7 @@ var ExosphereIntruders = function(c) {
        context.fillStyle = color;
 
         return template.split(/\n/).forEach(function(pixel, row) {
-			return pixel.split('').forEach(function(active, column) {
+            return pixel.split('').forEach(function(active, column) {
                 if (active === 'x') {
                     return context.fillRect((x + column) * scale, (y + row) * scale, scale, scale);
 		        }
