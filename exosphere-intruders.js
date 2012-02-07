@@ -2,13 +2,14 @@ var ExosphereIntruders = function(c) {
     "use strict";
 
     var width = 224;
+    var height = 260;
 
     var canvas = c;
     var context = canvas.getContext("2d");
     var fps = 30;
     /* Scale assumes the height and width of the canvas are a multiple of 224 by
        260. */
-    var scale = canvas.width / 224;
+    var scale = canvas.width / width;
     var intervalId;
     var laserBeam;
 
@@ -18,26 +19,26 @@ var ExosphereIntruders = function(c) {
 
         this.x = 105;
         this.y = 250;
+    };
 
-        LaserTurret.prototype.fire = function() {
-            if (laserBeam === undefined) {
-                var laserBeamX = this.x + 7;
-                var laserBeamY = this.y + 8;
-                laserBeam = new LaserBeam(laserBeamX, laserBeamY);
-            }
-        };
+    LaserTurret.prototype.fire = function() {
+        if (laserBeam === undefined) {
+            var laserBeamX = this.x + 7;
+            var laserBeamY = this.y + 8;
+            laserBeam = new LaserBeam(laserBeamX, laserBeamY);
+        }
+    };
 
-        LaserTurret.prototype.moveLeft = function() {
-            if ((this.x - this.speed) > 0) {
-                this.x -= this.speed;
-            }
-        };
+    LaserTurret.prototype.moveLeft = function() {
+        if ((this.x - this.speed) > 0) {
+            this.x -= this.speed;
+        }
+    };
 
-        LaserTurret.prototype.moveRight = function() {
-            if ((this.x + this.width + this.speed) < width) {
-                this.x += this.speed;
-            }
-        };
+    LaserTurret.prototype.moveRight = function() {
+        if ((this.x + this.width + this.speed) < width) {
+            this.x += this.speed;
+        }
     };
 
     var LaserBeam = function (x, y) {
@@ -45,20 +46,26 @@ var ExosphereIntruders = function(c) {
         this.y = y;
         this.length = 5;
         this.speed = 16;
+    };
 
-        LaserBeam.prototype.step = function() {
-            this.y -= this.speed;
-        };
+    LaserBeam.prototype.step = function() {
+        this.y -= this.speed;
+    };
+
+    var SpaceInvader = function(x, y) {
+        this.x = x;
+        this.y = y;
     };
 
     var laserTurret = new LaserTurret();
+    var spaceInvader = new SpaceInvader(width / 2, height / 2);
 
     var drawFromTemplate = function(x, y, template, color) {
        context.fillStyle = color;
 
         return template.split(/\n/).forEach(function(pixel, row) {
             return pixel.split('').forEach(function(active, column) {
-                if (active === 'x') {
+                if (active === '#') {
                     return context.fillRect((x + column) * scale, (y + row) * scale, scale, scale);
 		        }
 		    });
@@ -67,7 +74,7 @@ var ExosphereIntruders = function(c) {
 
     var drawLaserBeam = function () {
         if (laserBeam) {
-            var template = "x\nx\nx\nx\nx\n";
+            var template = "#\n#\n#\n#\n#\n";
 
             var color = "rgb(255, 0, 0)";
 
@@ -82,10 +89,17 @@ var ExosphereIntruders = function(c) {
     };
 
     var drawLaserTurret = function() {
-        var template = "       x       \n      xxx      \n      xxx      \n xxxxxxxxxxxx \nxxxxxxxxxxxxxx\nxxxxxxxxxxxxxx\nxxxxxxxxxxxxxx";
+        var template = "       #   \n      ###  \n      ###  \n ############ \n##############\n##############\n##############";
         var color = "rgb(0, 255, 0)";
 
         drawFromTemplate(laserTurret.x, laserTurret.y, template, color);
+    };
+
+    var drawSpaceInvader = function() {
+        var template = "   #     #  \n    #   #   \n   #######  \n  ## ### ## \n ###########\n # ####### #\n # #     # #\n    ## ##   ";
+        var color = "rgb(255, 255, 255)";
+
+        drawFromTemplate(spaceInvader.x, spaceInvader.y, template, color);
     };
 
     var initControls = function() {
@@ -127,6 +141,7 @@ var ExosphereIntruders = function(c) {
         clearCanvas();
         drawLaserTurret();
         drawLaserBeam();
+        drawSpaceInvader();
     };
 
     var run = function() {
