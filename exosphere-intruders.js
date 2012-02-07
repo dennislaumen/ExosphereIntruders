@@ -1,6 +1,8 @@
 var ExosphereIntruders = function(c) {
     "use strict";
 
+    var width = 224;
+
     var canvas = c;
     var context = canvas.getContext("2d");
     var fps = 30;
@@ -11,16 +13,16 @@ var ExosphereIntruders = function(c) {
     var laserBeam;
 
     var LaserTurret = function() {
-        this.width = 14 * scale;
-        this.speed = 8 * scale;
+        this.width = 14;
+        this.speed = 8;
 
-        this.x = 105 * scale;
-        this.y = 250 * scale;
+        this.x = 105;
+        this.y = 250;
 
         LaserTurret.prototype.fire = function() {
             if (laserBeam === undefined) {
-                var laserBeamX = this.x + (7 * scale);
-                var laserBeamY = this.y + (8 * scale);
+                var laserBeamX = this.x + 7;
+                var laserBeamY = this.y + 8;
                 laserBeam = new LaserBeam(laserBeamX, laserBeamY);
             }
         };
@@ -32,78 +34,58 @@ var ExosphereIntruders = function(c) {
         };
 
         LaserTurret.prototype.moveRight = function() {
-            if ((this.x + this.width + this.speed) < canvas.width) {
+            if ((this.x + this.width + this.speed) < width) {
                 this.x += this.speed;
             }
         };
     };
-    
+
     var LaserBeam = function (x, y) {
         this.x = x;
         this.y = y;
-        this.length = 5 * scale;
-        this.speed = 16 * scale;
-        
+        this.length = 5;
+        this.speed = 16;
+
         LaserBeam.prototype.step = function() {
             this.y -= this.speed;
-        }
+        };
     };
 
     var laserTurret = new LaserTurret();
 
+    var drawFromTemplate = function(x, y, template, color) {
+       context.fillStyle = color;
+
+        return template.split(/\n/).forEach(function(pixel, row) {
+			return pixel.split('').forEach(function(active, column) {
+                if (active === 'x') {
+                    return context.fillRect((x + column) * scale, (y + row) * scale, scale, scale);
+		        }
+		    });
+		});
+    };
+
     var drawLaserBeam = function () {
         if (laserBeam) {
-            var x = laserBeam.x;
-            var y = laserBeam.y;
-            var length = laserBeam.length;
+            var template = "x\nx\nx\nx\nx\n";
 
-            context.beginPath();
+            var color = "rgb(255, 0, 0)";
 
-            context.moveTo(x, y);
-
-            context.lineTo(x + (1 * scale), y);
-            context.lineTo(x + (1 * scale), y - (length * scale));
-            context.lineTo(x, y - (length * scale));
-            context.lineTo(x, y);
-            
-            if (y > (210 * scale)) {
-                context.fillStyle = "rgb(0, 255, 0)";    
-            } else if (y > (50 * scale)) {
-                context.fillStyle = "rgb(255, 255, 255)";
-            } else {
-                context.fillStyle = "rgb(255, 0, 0)";
+            if (laserBeam.y > 210) {
+                color = "rgb(0, 255, 0)";
+            } else if (laserBeam.y > 50) {
+                color = "rgb(255, 255, 255)";
             }
-            
-            context.fill();
+
+            drawFromTemplate(laserBeam.x, laserBeam.y, template, color);
         }
     };
 
     var drawLaserTurret = function() {
-        var x = laserTurret.x;
-        var y = laserTurret.y;
+        var template = "       x       \n      xxx      \n      xxx      \n xxxxxxxxxxxx \nxxxxxxxxxxxxxx\nxxxxxxxxxxxxxx\nxxxxxxxxxxxxxx";
+        var color = "rgb(0, 255, 0)";
 
-        context.beginPath();
-
-        context.moveTo(x, y);
-
-        context.lineTo(x + (14 * scale), y);
-        context.lineTo(x + (14 * scale), y - (3 * scale));
-        context.lineTo(x + (13 * scale), y - (3 * scale));
-        context.lineTo(x + (13 * scale), y - (4 * scale));
-        context.lineTo(x + (8 * scale), y - (4 * scale));
-        context.lineTo(x + (8 * scale), y - (6 * scale));
-        context.lineTo(x + (7 * scale), y - (6 * scale));
-        context.lineTo(x + (7 * scale), y - (7 * scale));
-        context.lineTo(x + (7 * scale), y - (6 * scale));
-        context.lineTo(x + (6 * scale), y - (6 * scale));
-        context.lineTo(x + (6 * scale), y - (4 * scale));
-        context.lineTo(x + (1 * scale), y - (4 * scale));
-        context.lineTo(x + (1 * scale), y - (3 * scale));
-        context.lineTo(x, y - (3 * scale));
-        context.lineTo(x, y);
-
-        context.fillStyle = "rgb(0, 255, 0)";
-        context.fill();
+        drawFromTemplate(laserTurret.x, laserTurret.y, template, color);
     };
 
     var initControls = function() {
@@ -130,7 +112,7 @@ var ExosphereIntruders = function(c) {
         context.fillStyle = "rgb(0, 0, 0)";
         context.fillRect(0, 0, canvas.width, canvas.height);
     };
-    
+
     var step = function() {
        if (laserBeam) {
            if (laserBeam.y > 0) {
@@ -138,9 +120,9 @@ var ExosphereIntruders = function(c) {
            } else {
                laserBeam = undefined;
            }
-       } 
+       }
     };
-    
+
     var redraw = function() {
         clearCanvas();
         drawLaserTurret();
