@@ -71,7 +71,7 @@ var ExosphereIntruders = function(c) {
 
     var canvas = c;
     var context = canvas.getContext("2d");
-    var fps = 30;
+    var fps = 120;
 	/* Scale assumes the height and width of the canvas are a multiple of 224 by
    	   260. */
     var scale = canvas.width / width;
@@ -116,7 +116,7 @@ var ExosphereIntruders = function(c) {
         },
 
         isIntersectingWith: function(other) {
-            return !(this.left > other.right || this.right < other.left || this.top > other.bottom || this.bottom < other.top);
+            return !(this.left() > other.right() || this.right() < other.left() || this.top() > other.bottom() || this.bottom() < other.top());
         }
     });
 
@@ -154,7 +154,7 @@ var ExosphereIntruders = function(c) {
     var LaserBeam = GraphicalRectangle.extend({
         init: function(x, y) {
             this._super(x, y, 1, 5, "rgb(255, 255, 255)", "#\n#\n#\n#\n#\n");
-            this.speed = 16;
+            this.speed = 4;
         },
 
         isOnScreen: function() {
@@ -204,6 +204,7 @@ var ExosphereIntruders = function(c) {
     var step = function() {
         if (spaceInvader && laserBeam) {
             if (spaceInvader.isIntersectingWith(laserBeam)) {
+                console.log("Space Invader shot down!");
                 spaceInvader = undefined;
                 laserBeam = undefined;
             }
