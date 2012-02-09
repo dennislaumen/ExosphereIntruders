@@ -1,3 +1,68 @@
+/* Simple JavaScript Inheritance
+ * By John Resig http://ejohn.org/
+ * MIT Licensed.
+ */
+// Inspired by base2 and Prototype
+(function() {
+    var initializing = false,
+        fnTest = /xyz/.test(function() {
+            xyz;
+        }) ? /\b_super\b/ : /.*/;
+
+    // The base Class implementation (does nothing)
+    this.Class = function() {};
+
+    // Create a new Class that inherits from this class
+    Class.extend = function(prop) {
+        var _super = this.prototype;
+
+        // Instantiate a base class (but only create the instance,
+        // don't run the init constructor)
+        initializing = true;
+        var prototype = new this();
+        initializing = false;
+
+        // Copy the properties over onto the new prototype
+        for (var name in prop) {
+            // Check if we're overwriting an existing function
+            prototype[name] = typeof prop[name] == "function" && typeof _super[name] == "function" && fnTest.test(prop[name]) ? (function(name, fn) {
+                return function() {
+                    var tmp = this._super;
+
+                    // Add a new ._super() method that is the same method
+                    // but on the super-class
+                    this._super = _super[name];
+
+                    // The method only need to be bound temporarily, so we
+                    // remove it when we're done executing
+                    var ret = fn.apply(this, arguments);
+                    this._super = tmp;
+
+                    return ret;
+                };
+            })(name, prop[name]) : prop[name];
+        }
+
+        // The dummy class constructor
+
+        function Class() {
+            // All construction is actually done in the init method
+            if (!initializing && this.init) this.init.apply(this, arguments);
+        }
+
+        // Populate our constructed prototype object
+        Class.prototype = prototype;
+
+        // Enforce the constructor to be what we expect
+        Class.prototype.constructor = Class;
+
+        // And make this class extendable
+        Class.extend = arguments.callee;
+
+        return Class;
+    };
+})();
+
 var ExosphereIntruders = function(c) {
     "use strict";
 
@@ -7,100 +72,110 @@ var ExosphereIntruders = function(c) {
     var canvas = c;
     var context = canvas.getContext("2d");
     var fps = 30;
-    /* Scale assumes the height and width of the canvas are a multiple of 224 by
-       260. */
+	/* Scale assumes the height and width of the canvas are a multiple of 224 by
+   	   260. */
     var scale = canvas.width / width;
     var intervalId;
-    var laserBeam;
 
-    var LaserTurret = function() {
-        this.width = 14;
-        this.speed = 8;
+    var GraphicalRectangle = Class.extend({
+        init: function(x, y, width, height, color, template) {
+            this.x = x;
+            this.y = y;
+            this.width = width;
+            this.height = height;
+            this.color = color;
+            this.template = template;
+        },
 
-        this.x = 105;
-        this.y = 250;
-    };
+        left: function() {
+            return this.x;
+        },
 
-    LaserTurret.prototype.fire = function() {
-        if (laserBeam === undefined) {
-            var laserBeamX = this.x + 7;
-            var laserBeamY = this.y + 8;
-            laserBeam = new LaserBeam(laserBeamX, laserBeamY);
+        right: function() {
+            return this.x + this.width;
+        },
+
+        top: function() {
+            return this.y;
+        },
+
+        bottom: function() {
+            return this.y + this.height;
+        },
+
+        draw: function(context) {
+            context.fillStyle = this.color;
+
+            return this.template.split(/\n/).forEach(function(pixel, row) {
+                return pixel.split('').forEach(function(active, column) {
+                    if (active === '#') {
+                        return context.fillRect((this.x + column) * scale, (this.y + row) * scale, scale, scale);
+                    }
+                }, this);
+            }, this);
+        },
+
+        isIntersectingWith: function(other) {
+            return !(this.left > other.right || this.right < other.left || this.top > other.bottom || this.bottom < other.top);
         }
-    };
+    });
 
-    LaserTurret.prototype.moveLeft = function() {
-        if ((this.x - this.speed) > 0) {
-            this.x -= this.speed;
-        }
-    };
+    var LaserTurret = GraphicalRectangle.extend({
+        init: function() {
+            this._super(105, 250, 14, 7, "rgb(0, 255, 0)", "       #   \n      ###  \n      ###  \n ############ \n##############\n##############\n##############");
+            this.speed = 8;
+        },
 
-    LaserTurret.prototype.moveRight = function() {
-        if ((this.x + this.width + this.speed) < width) {
-            this.x += this.speed;
-        }
-    };
-
-    var LaserBeam = function (x, y) {
-        this.x = x;
-        this.y = y;
-        this.length = 5;
-        this.speed = 16;
-    };
-
-    LaserBeam.prototype.step = function() {
-        this.y -= this.speed;
-    };
-
-    var SpaceInvader = function(x, y) {
-        this.x = x;
-        this.y = y;
-    };
-
-    var laserTurret = new LaserTurret();
-    var spaceInvader = new SpaceInvader(width / 2, height / 2);
-
-    var drawFromTemplate = function(x, y, template, color) {
-       context.fillStyle = color;
-
-        return template.split(/\n/).forEach(function(pixel, row) {
-            return pixel.split('').forEach(function(active, column) {
-                if (active === '#') {
-                    return context.fillRect((x + column) * scale, (y + row) * scale, scale, scale);
-		        }
-		    });
-		});
-    };
-
-    var drawLaserBeam = function () {
-        if (laserBeam) {
-            var template = "#\n#\n#\n#\n#\n";
-
-            var color = "rgb(255, 0, 0)";
-
-            if (laserBeam.y > 210) {
-                color = "rgb(0, 255, 0)";
-            } else if (laserBeam.y > 50) {
-                color = "rgb(255, 255, 255)";
+        fire: function() {
+            if (laserBeam === undefined) {
+                laserBeam = new LaserBeam(this.x + 7, this.y + 8);
             }
 
-            drawFromTemplate(laserBeam.x, laserBeam.y, template, color);
+            return laserBeam;
+        },
+
+        moveLeft: function() {
+            if ((this.x - this.speed) > 0) {
+                this.x -= this.speed;
+            }
+
+            return this;
+        },
+
+        moveRight: function() {
+            if ((this.x + this.width + this.speed) < width) {
+                this.x += this.speed;
+            }
+
+            return this;
+        },
+    });
+
+    var LaserBeam = GraphicalRectangle.extend({
+        init: function(x, y) {
+            this._super(x, y, 1, 5, "rgb(255, 255, 255)", "#\n#\n#\n#\n#\n");
+            this.speed = 16;
+        },
+
+        isOnScreen: function() {
+            return this.y > 0;
+        },
+
+        step: function() {
+            this.y -= this.speed;
+            return this;
         }
-    };
+    });
 
-    var drawLaserTurret = function() {
-        var template = "       #   \n      ###  \n      ###  \n ############ \n##############\n##############\n##############";
-        var color = "rgb(0, 255, 0)";
-
-        drawFromTemplate(laserTurret.x, laserTurret.y, template, color);
-    };
-
-    var drawSpaceInvader = function() {
-        var template = "   #     #  \n    #   #   \n   #######  \n  ## ### ## \n ###########\n # ####### #\n # #     # #\n    ## ##   ";
-        var color = "rgb(255, 255, 255)";
-
-        drawFromTemplate(spaceInvader.x, spaceInvader.y, template, color);
-    };
+    var SpaceInvader = GraphicalRectangle.extend({
+        init: function(x, y) {
+            this._super(x, y, 11, 8, "rgb(255, 255, 255)", "   #     #  \n    #   #   \n   #######  \n  ## ### ## \n ###########\n # ####### #\n # #     # #\n    ## ##   ");
+        },
+    });
+    
+    var laserBeam;
+    var laserTurret = new LaserTurret();
+    var spaceInvader = new SpaceInvader(100, 100);
 
     var initControls = function() {
         window.addEventListener("keydown", function(event) {
@@ -118,8 +193,7 @@ var ExosphereIntruders = function(c) {
                 break;
             }
         }, false);
-
-    };
+	};
 
     var clearCanvas = function() {
         context.clearRect(0, 0, canvas.width, canvas.height);
@@ -128,20 +202,36 @@ var ExosphereIntruders = function(c) {
     };
 
     var step = function() {
-       if (laserBeam) {
-           if (laserBeam.y > 0) {
-               laserBeam.step();
-           } else {
-               laserBeam = undefined;
-           }
-       }
+        if (spaceInvader && laserBeam) {
+            if (spaceInvader.isIntersectingWith(laserBeam)) {
+                spaceInvader = undefined;
+                laserBeam = undefined;
+            }
+        }
+
+        if (laserBeam) {
+            // A player can only shoot one laser beam at a time. We'll make 
+            // 'room' for a new laser beam once the previous one is off screen.
+            if (laserBeam.isOnScreen()) {
+                laserBeam.step();
+            } else {
+                laserBeam = undefined;
+            }
+        }
     };
 
     var redraw = function() {
         clearCanvas();
-        drawLaserTurret();
-        drawLaserBeam();
-        drawSpaceInvader();
+
+        laserTurret.draw(context);
+
+        if (laserBeam) {
+            laserBeam.draw(context);
+        }
+
+        if (spaceInvader) {
+            spaceInvader.draw(context);
+        }
     };
 
     var run = function() {
@@ -165,13 +255,12 @@ var ExosphereIntruders = function(c) {
     };
 };
 
-
 var init = function() {
-    var canvas = document.getElementById("canvas");
+        var canvas = document.getElementById("canvas");
 
-    var game = new ExosphereIntruders(canvas);
-    game.start();
-};
+        var game = new ExosphereIntruders(canvas);
+        game.start();
+    };
 
 document.addEventListener("DOMContentLoaded", function() {
     document.removeEventListener("DOMContentLoaded", this, false);
