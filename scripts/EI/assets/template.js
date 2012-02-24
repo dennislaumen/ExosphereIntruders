@@ -8,7 +8,17 @@ EI.assets.laserBeamTemplate = {
     shape: "#\n#\n#\n#\n#\n"
 };
 
-EI.assets.spaceInvaderTemplate = {
+EI.assets.crabTemplate = {
     color: "rgb(255, 255, 255)",
     shape: "   #     #  \n    #   #   \n   #######  \n  ## ### ## \n ###########\n # ####### #\n # #     # #\n    ## ##   "
+};
+
+EI.assets.octopusTemplate = {
+    color: "rgb(255, 255, 255)",
+    shape: "   ##   \n  ####  \n ###### \n## ## ##\n########\n  ####  \n # ## # \n# #  # #"
+};
+
+EI.assets.squidTemplate = {
+    color: "rgb(255, 255, 255)",
+    shape: "    ####    \n ########## \n############\n###  ##  ###\n############\n  ## ## ##  \n##        ##" 
 };

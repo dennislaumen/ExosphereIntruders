@@ -27,7 +27,18 @@ EI.core.renderer = {
         }
 
         if (gameState.spaceInvader) {
-            this.draw(gameState.spaceInvader, EI.assets.spaceInvaderTemplate);
+            var template;
+
+            // TODO: fix this, incredibly ugly!!!
+            if (EI.entities.crab.isPrototypeOf(gameState.spaceInvader)) {
+                template = EI.assets.crabTemplate;    
+            } else if (EI.entities.squid.isPrototypeOf(gameState.spaceInvader)) {
+                template = EI.assets.squidTemplate;
+            } else if (EI.entities.octopus.isPrototypeOf(gameState.spaceInvader)) {
+                template = EI.assets.octopusTemplate;
+            }
+
+            this.draw(gameState.spaceInvader, template);
         }
     },
 };

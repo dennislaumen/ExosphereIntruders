@@ -28,7 +28,7 @@ var init = function(scale) {
                     },
 
                     spaceInvader: {
-                        value: Object.create(EI.entities.spaceInvader, {
+                        value: Object.create(EI.entities.squid, {
                             x: {
                                 value: 100
                             },
