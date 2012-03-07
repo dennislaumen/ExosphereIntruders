@@ -26,19 +26,21 @@ EI.core.renderer = {
             this.draw(gameState.laserBeam, EI.assets.laserBeamTemplate);
         }
 
-        if (gameState.spaceInvader) {
+        for (var invaderIndex in gameState.formation.spaceInvaders) {
+            var invader = gameState.formation.spaceInvaders[invaderIndex];
             var template;
 
             // TODO: fix this, incredibly ugly!!!
-            if (EI.entities.crab.isPrototypeOf(gameState.spaceInvader)) {
+            if (EI.entities.crab.isPrototypeOf(invader)) {
                 template = EI.assets.crabTemplate;    
-            } else if (EI.entities.squid.isPrototypeOf(gameState.spaceInvader)) {
+            } else if (EI.entities.squid.isPrototypeOf(invader)) {
                 template = EI.assets.squidTemplate;
-            } else if (EI.entities.octopus.isPrototypeOf(gameState.spaceInvader)) {
+            } else if (EI.entities.octopus.isPrototypeOf(invader)) {
                 template = EI.assets.octopusTemplate;
             }
 
-            this.draw(gameState.spaceInvader, template);
+            this.draw(invader, template);
         }
+        
     },
 };

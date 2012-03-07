@@ -4,7 +4,28 @@ EI.entities.spaceInvader = Object.create(EI.core.rectangle, {
     },
 
     width: {
-        value: 11
+        value: 12
+    },
+
+    moveLeft: {
+        value: function(speed) {
+            this.x -= speed;
+            return this;
+        }
+    },
+
+    moveRight: {
+        value: function(speed) {
+            this.x += speed;
+            return this;
+        }
+    },
+
+    moveDown: {
+        value: function(speed) {
+            this.y += speed;
+            return this;
+        }
     }
 });
 

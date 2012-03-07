@@ -27,17 +27,8 @@ var init = function(scale) {
                         value: width
                     },
 
-                    spaceInvader: {
-                        value: Object.create(EI.entities.squid, {
-                            x: {
-                                value: 100
-                            },
-
-                            y: {
-                                value: 100
-                            }
-                        }),
-                        writable: true
+                    formation: {
+                        value: Object.create(EI.entities.formation)
                     },
 
                     laserTurret: {
