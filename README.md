@@ -2,6 +2,14 @@
 
 A pure (i.e. no JQuery or other funky JavaScript frameworks) Javascript and Canvas implementation of the classic video game Space Invaders.
 
+I gave myself the following constraints for this project:
+
+ * Pure JavaScript, i.e. no frameworks, libraries, etc.
+ * Pure prototypal inheritance (i.e. differential inheritance) with EcmaScript 5's Object.create() and no constructors, factories, or factory methods. This has a pretty big effect on the code, not always in a good way though (but don't worry, I'm aware of that ;-)). 
+ * No static assets like images etc. Pure canvas, baby!
+
+The above constraints lead to some weird code in places. If any JavaScript experts have ideas on how to improve this code within the above constraints. Contact me!
+
 Progress can be tracked on the project's [Trello board](https://trello.com/b/gpKdJ4QU).
 
 # License
